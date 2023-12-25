@@ -8,11 +8,9 @@ import com.allasassis.employeeservice.exception.ResourceNotFoundException;
 import com.allasassis.employeeservice.repository.EmployeeRepository;
 import com.allasassis.employeeservice.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.Optional;
 
@@ -23,13 +21,13 @@ public class EmployeeImpl implements EmployeeService {
     private EmployeeRepository repository;
 
     @Autowired
-    private RestTemplate restTemplate;
+    private WebClient webClient;
 
     @Override
     public EmployeeDto saveEmployee(EmployeeDto dto) {
         try {
-            restTemplate.getForEntity("http://localhost:8080/api/departments/" + dto.getDepartmentCode(), DepartmentDto.class);
-        } catch (HttpClientErrorException ex) {
+            webClient.get().uri("http://localhost:8080/api/departments/" + dto.getDepartmentCode()).retrieve().bodyToMono(DepartmentDto.class).block();
+        } catch (WebClientResponseException ex) {
             throw new ResourceNotFoundException("The department whose code is " + dto.getDepartmentCode() + ", does not exist!");
         }
         Employee employee = new Employee(dto);
@@ -44,7 +42,7 @@ public class EmployeeImpl implements EmployeeService {
             throw new ResourceNotFoundException("The user whose ID is " + id + ", does not exist!");
         }
 
-        ResponseEntity<DepartmentDto> depDto = restTemplate.getForEntity("http://localhost:8080/api/departments/" + employee.get().getDepartmentCode(), DepartmentDto.class);
-        return new ApiDto(new EmployeeDto(employee.get()), depDto.getBody());
+        DepartmentDto depDto = webClient.get().uri("http://localhost:8080/api/departments/" + employee.get().getDepartmentCode()).retrieve().bodyToMono(DepartmentDto.class).block();
+        return new ApiDto(new EmployeeDto(employee.get()), depDto);
     }
 }
