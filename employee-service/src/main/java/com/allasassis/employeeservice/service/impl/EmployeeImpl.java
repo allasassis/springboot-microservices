@@ -6,11 +6,11 @@ import com.allasassis.employeeservice.dto.EmployeeDto;
 import com.allasassis.employeeservice.entity.Employee;
 import com.allasassis.employeeservice.exception.ResourceNotFoundException;
 import com.allasassis.employeeservice.repository.EmployeeRepository;
+import com.allasassis.employeeservice.service.APIClient;
 import com.allasassis.employeeservice.service.EmployeeService;
+import feign.FeignException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.Optional;
 
@@ -21,13 +21,13 @@ public class EmployeeImpl implements EmployeeService {
     private EmployeeRepository repository;
 
     @Autowired
-    private WebClient webClient;
+    private APIClient apiClient;
 
     @Override
     public EmployeeDto saveEmployee(EmployeeDto dto) {
         try {
-            webClient.get().uri("http://localhost:8080/api/departments/" + dto.getDepartmentCode()).retrieve().bodyToMono(DepartmentDto.class).block();
-        } catch (WebClientResponseException ex) {
+            apiClient.getDepartmentByCode(dto.getDepartmentCode());
+        } catch (FeignException ex) {
             throw new ResourceNotFoundException("The department whose code is " + dto.getDepartmentCode() + ", does not exist!");
         }
         Employee employee = new Employee(dto);
@@ -42,7 +42,7 @@ public class EmployeeImpl implements EmployeeService {
             throw new ResourceNotFoundException("The user whose ID is " + id + ", does not exist!");
         }
 
-        DepartmentDto depDto = webClient.get().uri("http://localhost:8080/api/departments/" + employee.get().getDepartmentCode()).retrieve().bodyToMono(DepartmentDto.class).block();
+        DepartmentDto depDto = apiClient.getDepartmentByCode(employee.get().getDepartmentCode());
         return new ApiDto(new EmployeeDto(employee.get()), depDto);
     }
 }
