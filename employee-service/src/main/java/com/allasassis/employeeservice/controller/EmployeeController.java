@@ -1,5 +1,6 @@
 package com.allasassis.employeeservice.controller;
 
+import com.allasassis.employeeservice.dto.ApiDto;
 import com.allasassis.employeeservice.dto.EmployeeDto;
 import com.allasassis.employeeservice.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable Long id) {
+    public ResponseEntity<ApiDto> getEmployeeById(@PathVariable Long id) {
         return new ResponseEntity<>(employeeService.getEmployeeById(id), HttpStatus.OK);
     }
 }

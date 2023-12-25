@@ -22,10 +22,12 @@ public class Employee {
     private String lastName;
     @Column(nullable = false, unique = true)
     private String email;
+    private String departmentCode;
 
     public Employee(EmployeeDto dto) {
         this.firstName = dto.getFirstName();
         this.lastName = dto.getLastName();
         this.email = dto.getEmail();
+        this.departmentCode = dto.getDepartmentCode();
     }
 }

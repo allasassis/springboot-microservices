@@ -16,11 +16,13 @@ public class EmployeeDto {
     private String firstName;
     private String lastName;
     private String email;
+    private String departmentCode;
 
     public EmployeeDto(Employee employee) {
         this.id = employee.getId();
         this.firstName = employee.getFirstName();
         this.lastName = employee.getLastName();
         this.email = employee.getEmail();
+        this.departmentCode = employee.getDepartmentCode();
     }
 }
