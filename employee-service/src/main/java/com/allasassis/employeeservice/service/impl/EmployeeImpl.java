@@ -27,7 +27,7 @@ public class EmployeeImpl implements EmployeeService {
     public EmployeeDto getEmployeeById(Long id) throws ResourceNotFoundException{
         Optional<Employee> employee = repository.findById(id);
         if (employee.isEmpty()) {
-            throw new ResourceNotFoundException("The user whose ID is = " + id + ", does not exist!");
+            throw new ResourceNotFoundException("The user whose ID is " + id + ", does not exist!");
         }
         return new EmployeeDto(employee.get());
     }
