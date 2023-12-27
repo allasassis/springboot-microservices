@@ -16,6 +16,9 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public DepartmentDto saveDepartment(DepartmentDto dto) {
+        if (repository.findByDepartmentCode(dto.getDepartmentCode()) != null) {
+            throw new ResourceNotFoundException("A department with the code: " + dto.getDepartmentCode() + " already exists in our system!");
+        }
         Department department = new Department(dto);
         repository.save(department);
         return new DepartmentDto(department);
