@@ -11,11 +11,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 @EnableFeignClients
 public class EmployeeServiceApplication {
 
-//	@Bean
-//	public WebClient webClient() {
-//		return WebClient.builder().build();
-//	}
-
 	public static void main(String[] args) {
 		SpringApplication.run(EmployeeServiceApplication.class, args);
 	}
