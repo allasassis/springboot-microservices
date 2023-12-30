@@ -9,6 +9,7 @@ import com.allasassis.employeeservice.repository.EmployeeRepository;
 import com.allasassis.employeeservice.service.APIClient;
 import com.allasassis.employeeservice.service.EmployeeService;
 import feign.FeignException;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +36,7 @@ public class EmployeeImpl implements EmployeeService {
         return new EmployeeDto(employee);
     }
 
+    @CircuitBreaker(name = "${spring.application.name}", fallbackMethod = "getDefaultDepartment")
     @Override
     public ApiDto getEmployeeById(Long id) throws ResourceNotFoundException{
         Optional<Employee> employee = repository.findById(id);
@@ -43,6 +45,19 @@ public class EmployeeImpl implements EmployeeService {
         }
 
         DepartmentDto depDto = apiClient.getDepartmentByCode(employee.get().getDepartmentCode());
+        return new ApiDto(new EmployeeDto(employee.get()), depDto);
+    }
+
+    public ApiDto getDefaultDepartment(Long id, Exception e) throws ResourceNotFoundException{
+        Optional<Employee> employee = repository.findById(id);
+        if (employee.isEmpty()) {
+            throw new ResourceNotFoundException("The user whose ID is " + id + ", does not exist!");
+        }
+
+        DepartmentDto depDto = new DepartmentDto();
+        depDto.setDepartmentDescription("Default Department");
+        depDto.setDepartmentName("Default Department");
+        depDto.setDepartmentCode("000000");
         return new ApiDto(new EmployeeDto(employee.get()), depDto);
     }
 }
