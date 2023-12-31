@@ -13,4 +13,5 @@ public class ApiDto {
 
     private EmployeeDto employeeDto;
     private DepartmentDto departmentDto;
+    private OrganizationDto organizationDto;
 }

@@ -17,6 +17,7 @@ public class EmployeeDto {
     private String lastName;
     private String email;
     private String departmentCode;
+    private String organizationCode;
 
     public EmployeeDto(Employee employee) {
         this.id = employee.getId();
@@ -24,5 +25,6 @@ public class EmployeeDto {
         this.lastName = employee.getLastName();
         this.email = employee.getEmail();
         this.departmentCode = employee.getDepartmentCode();
+        this.organizationCode = employee.getOrganizationCode();
     }
 }

@@ -23,11 +23,13 @@ public class Employee {
     @Column(nullable = false, unique = true)
     private String email;
     private String departmentCode;
+    private String organizationCode;
 
     public Employee(EmployeeDto dto) {
         this.firstName = dto.getFirstName();
         this.lastName = dto.getLastName();
         this.email = dto.getEmail();
         this.departmentCode = dto.getDepartmentCode();
+        this.organizationCode = dto.getOrganizationCode();
     }
 }
