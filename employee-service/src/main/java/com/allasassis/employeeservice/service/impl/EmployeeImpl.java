@@ -9,7 +9,7 @@ import com.allasassis.employeeservice.repository.EmployeeRepository;
 import com.allasassis.employeeservice.service.APIClient;
 import com.allasassis.employeeservice.service.EmployeeService;
 import feign.FeignException;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,28 +36,17 @@ public class EmployeeImpl implements EmployeeService {
         return new EmployeeDto(employee);
     }
 
-    @CircuitBreaker(name = "${spring.application.name}", fallbackMethod = "getDefaultDepartment")
+//    @CircuitBreaker(name = "${spring.application.name}", fallbackMethod = "getDefaultDepartment")
+    @Retry(name = "${spring.application.name}", fallbackMethod = "getDefaultDepartment")
     @Override
     public ApiDto getEmployeeById(Long id) throws ResourceNotFoundException{
-        Optional<Employee> employee = repository.findById(id);
-        if (employee.isEmpty()) {
-            throw new ResourceNotFoundException("The user whose ID is " + id + ", does not exist!");
-        }
-
-        DepartmentDto depDto = apiClient.getDepartmentByCode(employee.get().getDepartmentCode());
-        return new ApiDto(new EmployeeDto(employee.get()), depDto);
+        Employee employee = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("The user whose ID is " + id + ", does not exist!"));
+        DepartmentDto depDto = apiClient.getDepartmentByCode(employee.getDepartmentCode());
+        return new ApiDto(new EmployeeDto(employee), depDto);
     }
 
     public ApiDto getDefaultDepartment(Long id, Exception e) throws ResourceNotFoundException{
-        Optional<Employee> employee = repository.findById(id);
-        if (employee.isEmpty()) {
-            throw new ResourceNotFoundException("The user whose ID is " + id + ", does not exist!");
-        }
-
-        DepartmentDto depDto = new DepartmentDto();
-        depDto.setDepartmentDescription("Default Department");
-        depDto.setDepartmentName("Default Department");
-        depDto.setDepartmentCode("000000");
-        return new ApiDto(new EmployeeDto(employee.get()), depDto);
+        Employee employee = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("The user whose ID is " + id + ", does not exist!"));
+        return new ApiDto(new EmployeeDto(employee), new DepartmentDto("Default Department", "Default Department", "000000"));
     }
 }

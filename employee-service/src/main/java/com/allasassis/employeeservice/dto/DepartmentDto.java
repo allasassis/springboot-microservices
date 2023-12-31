@@ -15,4 +15,10 @@ public class DepartmentDto {
     private String departmentName;
     private String departmentDescription;
     private String departmentCode;
+
+    public DepartmentDto(String departmentName, String departmentDescription, String departmentCode) {
+        this.departmentCode = departmentCode;
+        this.departmentDescription = departmentDescription;
+        this.departmentName = departmentName;
+    }
 }
