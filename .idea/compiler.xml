@@ -7,10 +7,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="api-gateway" />
         <module name="config-server" />
-        <module name="organization-service" />
         <module name="department-service" />
+        <module name="api-gateway" />
+        <module name="organization-service" />
+        <module name="docker-demo" />
         <module name="service-registry" />
         <module name="employee-service" />
       </profile>
@@ -21,6 +22,7 @@
       <module name="api-gateway" options="-parameters" />
       <module name="config-server" options="-parameters" />
       <module name="department-service" options="-parameters" />
+      <module name="docker-demo" options="-parameters" />
       <module name="employee-service" options="-parameters" />
       <module name="organization-service" options="-parameters" />
       <module name="service-registry" options="-parameters" />
